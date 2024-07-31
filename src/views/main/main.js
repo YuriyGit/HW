@@ -1,22 +1,39 @@
 import {AbstractView} from "../../common/view.js";
+import onChange from "on-change";
+import {Header} from "../../components/header/header.js";
 
 export class MainView extends AbstractView {
-    constructor() {
-        super();
-        this.setTitle('поиск книг');
-    }
-
     state = {
         list: [],
         loading: false,
         searchQuery: undefined,
-        offset: 0
+        offset: 0,
+    }
+
+    constructor(appState) {
+        super();
+        this.appState = appState;
+        this.appState = onChange(this.appState, this.appStateHook.bind(this))
+        this.setTitle('поиск книг');
+    }
+
+    appStateHook(path) {
+        if (path === 'favorites') {
+            console.log(path, 'path')
+            // this.render();
+        }
     }
 
     render() {
         const main = document.createElement('div');
-        main.innerHTML = 'Test';
-        // this.app.innerHTML = ''  !
+        this.app.innerHTML = ''
         this.app.append(main)
+        this.renderHeader();
+        this.appState.favorites.push('123')
+    }
+
+    renderHeader() {
+        const header = new Header(this.appState).render();
+        this.app.prepend(header);
     }
 }
